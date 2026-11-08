@@ -1,0 +1,21 @@
+# Run in an x64 Native Tools Command Prompt for Visual Studio.
+CXX=cl
+FLAGS=/nologo /O2 /EHsc /std:c++17 /W4 /Iinclude
+
+all: hardcore_vmc.exe
+
+hardcore_vmc.exe: src/main.cpp src/vmc.cpp include/vmc.hpp
+	$(CXX) $(FLAGS) src/main.cpp src/vmc.cpp /Fe:hardcore_vmc.exe
+
+vmc_tests.exe: tests/test_vmc.cpp src/vmc.cpp include/vmc.hpp
+	$(CXX) $(FLAGS) tests/test_vmc.cpp src/vmc.cpp /Fe:vmc_tests.exe
+
+test: vmc_tests.exe
+	.\vmc_tests.exe
+
+clean:
+	-if exist hardcore_vmc.exe del hardcore_vmc.exe
+	-if exist vmc_tests.exe del vmc_tests.exe
+	-if exist main.obj del main.obj
+	-if exist vmc.obj del vmc.obj
+	-if exist test_vmc.obj del test_vmc.obj

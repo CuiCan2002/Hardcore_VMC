@@ -1,0 +1,22 @@
+# Warm start near the last valid parameters of job 74649.
+Lx = 8
+Ly = 8
+Nb = 8
+JB = 0.06
+VB = 2.5
+K = 1
+chi1 = 0.013240490721425768
+Delta = 0.23568333450231538
+delta = 1e-4
+optimize_delta = 0
+max_log_delta_step = 1
+warmup_sweeps = 1000
+samples = 20000
+sweeps_between = 2
+block_size = 500
+seed = 20261030
+sr_iterations = 20
+sr_step = 0.02
+sr_shift = 0.001
+correlations = 1
+output = results_delta_scan

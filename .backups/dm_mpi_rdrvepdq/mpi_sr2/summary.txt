@@ -1,0 +1,10 @@
+E_per_site = -0.0925781250000000000027
+blocked_error_per_site = 0.00117187499999999998787
+E_J = 0
+E_V = 2.46875
+E_K = -3.95000000000000000004
+position_acceptance = 0.0996168582375478927225
+samples = 400
+samples_scope = total_across_chains
+mpi_ranks = 2
+sr_iterations_completed = 2

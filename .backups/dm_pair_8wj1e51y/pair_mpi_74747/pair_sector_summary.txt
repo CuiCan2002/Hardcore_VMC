@@ -1,0 +1,12 @@
+pair_estimator = direct_pair_sector
+translation_averaged = 1
+pair_sector_samples = 40033
+diagonal_bias = 20
+biased_diagonal_visits = 3933
+pair_trace = 9.37674437968359700268
+uniform_pair_occupation = 6.00941479660780982722
+uniform_pair_fraction = 0.640884997316156736409
+endpoint_acceptance = 0.506160527652628686125
+background_acceptance = 0.0170475161716804784563
+worm_change_rate = 0.0106974425030644256543
+capped_worms = 0

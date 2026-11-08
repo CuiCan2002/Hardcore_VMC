@@ -1,0 +1,2 @@
+one_body_samples = 400
+pair_samples = 20

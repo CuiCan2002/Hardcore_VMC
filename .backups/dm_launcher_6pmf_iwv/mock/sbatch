@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e
+while [[ $1 == --* ]]; do shift; done
+SLURM_JOB_ID=999999 bash "$@" >&2
+echo 999999

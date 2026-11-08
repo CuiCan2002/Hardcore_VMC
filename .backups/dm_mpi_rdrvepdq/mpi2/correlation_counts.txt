@@ -1,0 +1,2 @@
+one_body_samples = 820
+pair_samples = 41

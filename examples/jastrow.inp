@@ -1,0 +1,27 @@
+# Small MPI launcher smoke test, suitable for VMC_RANKS=4.
+Lx = 4
+Ly = 4
+Nb = 4
+JB = 0.06
+VB = 2.5
+K = 1
+chi1 = 0.05
+Delta = 0.2
+delta = 0.66
+samples = 4600
+block_size = 100
+warmup_sweeps = 100
+sweeps_between = 2
+seed = 12345
+sr_iterations = 2
+sr_step = 0.02
+sr_shift = 0.001
+diagnostics = 1
+diagnostic_stride = 1
+correlations = 1
+output = results_mpi_smoke
+
+Ifjastrow = 1
+v1 = 0
+v2 = 0
+v3 = 0

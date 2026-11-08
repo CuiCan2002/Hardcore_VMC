@@ -1,0 +1,27 @@
+Job ID: 999999
+Node: ias-hpc3
+Start: 2026-11-07T15:25:17+08:00
+Input snapshot: /DATA/cuic/Hardcore_boson_VMC/.backups/dm_mpi_rdrvepdq/data/DM_L16x16_Nb32_JB0_VB2.5_K1_chi10.0486585604784_Delta2.88959808215_delta6.10915055737_20261107_152517_210311/logs/run.inp
+g++ (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0
+Copyright (C) 2017 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+Intel(R) MPI Library for Linux* OS, Version 2021.1 Build 20201112 (id: b9c9d2fc5)
+Copyright 2003-2020, Intel Corporation.
+MPI ranks: 2
+Building and testing the source snapshot...
+make: Entering directory '/DATA/cuic/Hardcore_boson_VMC/.backups/dm_mpi_rdrvepdq/.job_builds/dm.8GJxsIcu'
+mpicxx -Iinclude -O3 -std=c++17 -Wall -Wextra -Wpedantic -DDOUBLE_MATCHING_MPI include/double_matching_vmc.cpp src/vmc.cpp -o hardcore_vmc_double_matching_mpi -lstdc++fs -lstdc++fs
+mpicxx -Iinclude -O3 -std=c++17 -Wall -Wextra -Wpedantic tests/test_vmc.cpp src/vmc.cpp -o vmc_tests -lstdc++fs
+./vmc_tests
+4x4 Nb=2 exact variational energy = -1.45756; MC = -1.45703 +/- 0.00225762
+Full one-body and NN pair matrices match exact Fock-space sums.
+Full one-body and NN pair matrices match exact Fock-space sums.
+All physics and numerical tests passed.
+make: Leaving directory '/DATA/cuic/Hardcore_boson_VMC/.backups/dm_mpi_rdrvepdq/.job_builds/dm.8GJxsIcu'
+Running double-matching VMC...
+Double matching: 2 chain(s), sample budgets are totals
+position_acceptance=0.00626241 worm_change_rate=0.0203104 capped_worms=0
+Final E/Ns = -0.0724161 +/- 0.00219568
+Completed. Results: /DATA/cuic/Hardcore_boson_VMC/.backups/dm_mpi_rdrvepdq/data/DM_L16x16_Nb32_JB0_VB2.5_K1_chi10.0486585604784_Delta2.88959808215_delta6.10915055737_20261107_152517_210311/results

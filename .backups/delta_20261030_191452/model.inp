@@ -1,0 +1,32 @@
+# Model: square lattice, periodic boundaries; density nu = Nb/(Lx*Ly).
+Lx = 8
+Ly = 8
+Nb = 8
+JB = 0.06
+VB = 2.5
+K = 1.0
+
+# Independent variational parameters (not physical model couplings).
+# Stable illustrative starting point; not a self-consistent/optimized solution.
+chi1 = 0.05
+Delta = 0.05
+lambda_eff = 2.5
+stability_margin = 1e-8
+
+# One sweep = Nb attempted moves. Global moves remain enabled.
+local_probability = 0.5
+warmup_sweeps = 500
+samples = 2000
+sweeps_between = 2
+block_size = 100
+seed = 12345
+
+# Set >0 to optimize; a fresh measurement follows the last update.
+sr_iterations = 0
+sr_step = 0.05
+sr_shift = 0.001
+
+# G1(r), G2_xx(r), density correlations and S(q); expensive for large systems.
+correlations = 1
+# Relative to the current working directory. Must not already exist.
+output = results

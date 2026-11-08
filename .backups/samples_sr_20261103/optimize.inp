@@ -1,0 +1,24 @@
+Lx = 12
+Ly = 12
+Nb = 18
+JB = 0.00
+VB = 2.5
+K = 1
+chi1 = 0.05
+Delta = 0.2
+delta = 0.65999999999999992
+optimize_delta = 1
+max_log_delta_step = 1
+warmup_sweeps = 500
+samples = 5000000
+sweeps_between = 2
+block_size = 100
+seed = 12345
+sr_iterations = 100
+sr_step = 0.02
+sr_shift = 0.001
+correlations = 1
+output = results_optimized
+
+diagnostics = 1
+diagnostic_stride = 1

@@ -1,0 +1,475 @@
+            从均匀玻色平均场到 Hard-core Projected VMC
+                    推导、采样、局域能量与 Stochastic Reconfiguration
+
+
+                                             研究笔记
+
+                                       2026 年 10 月 30 日
+
+
+                                                 摘要
+         本文针对二维正方晶格的 hard-core boson 模型，建立统一流程：用具有密度、正常跃迁
+    和异常配对通道的普通玻色子 Gaussian/Bogoliubov 参考哈密顿量产生 fij ，对相应 squeezed
+    vacuum 进行 hard-core 与定粒子数投影，计算配置振幅的 Hafnian，用 Metropolis 采样原始
+    Hamiltonian，并通过 stochastic reconfiguration (SR) 优化少量平均场参数。特别说明：普通玻
+    色子 Wick 分解仅用于构造试探态，而 VMC 始终在 hard-core Hilbert space 内计算原始哈密
+    顿量；这两件事不应混淆。
+
+
+
+                                                目录
+
+1 问题定义与记号                                                                                            2
+
+2 第一步：选取均匀 Gaussian 参考平均场                                                                            2
+  2.1   Order parameters . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   2
+  2.2   VB 项的 canonical-boson Gaussian 分解 . . . . . . . . . . . . . . . . . . . . . . . .            2
+  2.3   K 项的三个收缩通道 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .             3
+
+3 第二步：傅里叶变换与 Bogoliubov pairing kernel                                                               3
+  3.1   若首先求参考平均场的自洽解 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .                    4
+
+4 第三步：明确独立变分参数及冗余                                                                                    4
+
+5 第四步：hard-core 和粒子数投影                                                                               4
+
+6 第五步：Metropolis 抽样                                                                                  5
+
+7 第六步：原始 hard-core Hamiltonian 的 local energy                                                        5
+  7.1   Correlated hopping 的简化计数 . . . . . . . . . . . . . . . . . . . . . . . . . . . . .           6
+
+8 第七步：导数与 Stochastic Reconfiguration (SR)                                                            6
+
+9 第八步：Hafnian 比值与数值成本                                                                                7
+
+                                                  1
+Hard-core boson: projected mean-field VMC                                                                            研究笔记
+
+
+10 第九步：凝聚零模、秩一极限与物理测量                                                                                                        7
+
+11 第十步：可执行的数值工作流程                                                                                                            7
+
+12 最关键的结论与实施边界                                                                                                               8
+
+
+                                             1 问题定义与记号
+
+                                  ，hard-core 算符 bi 满足 ni = b†i bi ∈ {0, 1}。
+      设正方晶格有 Ns = Lx Ly 个格点（周期边界条件）
+原始模型为                                             X                              X
+                                   H = − JB              (b†i bj + h.c.) + VB            ni nj
+                                                  ⟨ij⟩                            ⟨ij⟩
+                                                 X X                                                                       (1)
+                                          −K                       ni b†i+δ bi+δ′ + h.c. .
+                                                  i     δ=±x̂
+                                                        δ ′ =±ŷ
+
+考察固定粒子数 Nb = νNs 的零温基态；对于纯粹的 pair-exponential Ansatz，先要求 Nb = 2M
+为偶数。之前研究的参数是 JB = 0.06, VB = 2.5, K = 1, ν = 1/8。
+      重要原则：以下 ai 表示未投影的 canonical boson，[ai , a†j ] = δij 。参考平均场可以违反 ni ≤ 1，
+但最终物理试探态通过 PHC 投影后严格满足它。原模型的相互作用和跃迁绝不以平均场算符代替
+来计算 VMC 能量。
+
+
+                        2 第一步：选取均匀 Gaussian 参考平均场
+
+2.1 Order parameters
+
+      取平移不变、C4 对称、实数的辅助平均场参数
+
+       ν = ha†i ai i,   χ1 = ha†i ai+x̂ i = ha†i ai+ŷ i,      χ2 = ha†i+x̂ ai+ŷ i,       ∆ = hai ai+x̂ i = hai ai+ŷ i.   (2)
+
+其中 χ2 指一个对角次近邻 normal correlator。这里的 ∆ 是破缺粒子数 U (1) 的参考态的 anomalous
+correlator；定粒子数投影后 hbi bj i = 0，配对物理应由四点函数判断。
+
+
+2.2    VB 项的 canonical-boson Gaussian 分解
+
+      对 i 6= j，普通玻色子 Gaussian Wick/Hartree–Fock–Bogoliubov 分解给出
+
+                                         ni nj ≃ ν(ni + nj ) − ν 2
+                                                      + χ1 (a†i aj + a†j ai ) − χ21                                         (3)
+                                                      + ∆(a†i a†j + ai aj ) − ∆2 .
+
+此处 +VB χ1 是 canonical boson 的 normal/Fock 收缩符号；不能把它解释为一个由 hard-core 算
+符代数唯一规定的交换修正。之所以允许这样做，是因为我们仅将此二次型作为生成变分态的辅助
+工具，后续做严格投影。
+
+
+
+                                                                   2
+Hard-core boson: projected mean-field VMC                                                       研究笔记
+
+
+2.3    K 项的三个收缩通道
+
+      记 x = i + δ, y = i + δ ′ ，三个格点互不相同。普通玻色子 Gaussian 分解为
+
+                                   ni a†x ay ≃ νa†x ay + χ2 ni − νχ2
+                                               |         {z        }
+                                                   density channel
+
+                                               + χ1 (a†x ai + a†i ay ) − χ21
+                                                 |           {z           }                        (4)
+                                                       normal channel
+
+                                               + ∆(a†i a†x + ai ay ) − ∆2 .
+                                                 |          {z          }
+                                                           pair channel
+
+加上 Hermitian conjugate 并对 i, δ, δ ′ 求和，得到：
+
+  • density contraction 产生每条对角次近邻键的有效 hopping −2Kν；
+
+  • normal contraction 产生最近邻 hopping −4Kχ1 ；
+
+  • pairing contraction 产生最近邻 pairing −4K∆；
+                            P
+  • χ2 ni 给出化学势修正 −8Kχ2 i ni 。
+
+因此，在这个具体的 canonical-boson HFB 方案下，定义
+
+                  g = VB − 4K,        Jeff = JB − gχ1 ,             λeff = λ + 4VB ν − 8Kχ2 .      (5)
+                             P                †                       P
+对角 hopping 项为 −2Kν               ⟨⟨ij⟩⟩diag (ai aj + h.c.)。如果写出能量常数（λ   i (ni − ν) 的约定），则
+
+                      C = −Ns λν − 2Ns VB ν 2 + 8KNs νχ2 − 2Ns g(χ21 + ∆2 ).                       (6)
+
+常数项不影响生成的 fij ，但若求平均场自身的能量则必须保留。此前的仅配对通道方案对应省略
+χ1 , χ2 及密度收缩，而不是这里的完整 HFB 方案。
+
+
+           3 第二步：傅里叶变换与 Bogoliubov pairing kernel
+              −1/2 P        ik·ri a ，定义
+      取 ai = Ns        ke          k
+
+                              γk = cos kx + cos ky ,          ηk = cos kx cos ky .                 (7)
+
+参考哈密顿量可写为
+                                          X               Bk                       
+                                                                                        
+                            HMF = C +          Ak a†k ak +        a†k a†−k + a−k ak         ,      (8)
+                                                           2
+                                          k
+
+其中
+                                  Ak = λeff − 2(JB − gχ1 )γk − 8Kνηk ,
+                                                         q                                         (9)
+                                  Bk = 2g∆γk ,     Ek = A2k − Bk2 .
+
+稳定的无凝聚 squeezed vacuum 要求所有 k 满足 Ak > |Bk |；仅要求 Ek 为实数是不够的。对于
+这样的参考态，Bogoliubov 变换给出
+
+                               vk      Bk                           1 X ik·(ri −rj )
+                        fk =      =−          ,             fij =      e             fk .         (10)
+                               uk    Ak + E k                       Ns
+                                                                          k
+
+
+                                                       3
+Hard-core boson: projected mean-field VMC                                           研究笔记
+
+
+可直接使用 FFT 得到全部相对位移的 f (r)；即使 Ak , Bk 只有低阶 Fourier harmonics，f (r) 仍一
+般是长程函数。fii 在 hard-core 投影后不影响物理态，可置零以方便计算。
+
+
+3.1    若首先求参考平均场的自洽解
+
+      对无单玻色子凝聚且零温的 Gaussian vacuum，
+                                   
+                    †        1 Ak                         Bk
+             nk = hak ak i =      −1 , mk = hak a−k i = −     .                       (11)
+                             2 Ek                         2Ek
+
+于是有四个自洽条件
+                                         1 X
+                                    ν=          nk ,
+                                        Ns
+                                            k
+                                          1 X
+                                   χ1 =           γ k nk ,
+                                        2Ns
+                                              k
+                                                                                      (12)
+                                         1 X
+                                   χ2 =         η k nk ,
+                                        Ns
+                                            k
+                                          1 X
+                                   ∆=             γk mk .
+                                        2Ns
+                                                  k
+
+这些方程可用于寻找初始参数；但不应在 VMC 优化的每一步都强制它们成立，否则限制了真正
+的能量变分。若参考态在 Q 点凝聚，式(12) 必须额外考虑 condensate，并将零模从 fluctuation 求
+和中分离，不能直接套用无凝聚方程。
+
+
+                     4 第三步：明确独立变分参数及冗余
+
+      在固定目标密度 ν 下，χ2 只通过 λeff = λ + 4VB ν − 8Kχ2 进入 fk ；若 λ 是自由变分参数，χ2
+不形成独立的波函数方向。因此可直接选
+
+                                     α = (χ1 , ∆, λeff ) ,                            (13)
+
+再用式(9)–(10) 产生 fij (α)。两个不同的参数集若生成同一个投影态，能量必定相同；优化时应检
+查参数冗余和 SR 矩阵的小本征值。
+      另一种选择是每次用未投影密度方程确定 λeff ，只优化 (χ1 , ∆)，但因为最终已有 PNb ，这样
+做并非必须，且限制变分空间。若 Bk ≡ 0 且 Nb > 0，纯 squeezed pair Ansatz 的定粒子数投影为
+零态，应避免直接取 ∆ = 0。整体缩放 fij 7→ cfij 在 Nb = 2M 投影后只给出整体因子 cM ，也是
+一种波函数冗余。
+
+
+                     5 第四步：hard-core 和粒子数投影
+
+      采用普通玻色子 Fock vacuum |0i：
+                                                                        
+                                                   1X
+                       |ΨB (α)i = PHC PNb exp              fij (α)a†i a†j  |0i.     (14)
+                                                   2
+                                                       ij
+
+
+
+
+                                              4
+Hard-core boson: projected mean-field VMC                                                研究笔记
+
+
+对 Nb = 2M ，只有指数展开的 M 阶项保留下来：
+                                             M
+                                X
+                   |ΨB i ∝ PHC   fij a†i a†j  |0i.                                       (15)
+                                                    ij
+
+一个配置 C = {r1 , . . . , r2M } 中，粒子占据的格点互不相同；相应振幅为
+
+                          Ψ(C; α) = Haf(FC ),                  (FC )ab = fra rb .          (16)
+
+Hafnian 是所有无序完全配对的乘积之和；四个粒子时
+
+                         Ψ(r1 , r2 , r3 , r4 ) = f12 f34 + f13 f24 + f14 f23 .             (17)
+
+与 fermionic pairing 的 Pfaﬀian 不同，bosonic pairing 的配对交换无统计负号。若 Nb 为奇数，纯
+pair-exponential 在该 sector 的投影严格为零，需要加入未配对玻色子或 coherent displacement。
+
+
+                          6 第五步：Metropolis 抽样
+
+    按
+                                                        |Ψ(C)|2
+                                           p(C) = P             ′ 2
+                                                                                           (18)
+                                                        C ′ |Ψ(C )|
+采样：
+
+  1. 随机生成具有 Nb 个不同占据格点的初始配置 C，要求 Ψ(C) 6= 0；
+
+  2. 随机选一个已占据位置 i 和一个空位置 j，尝试移动 i → j；
+
+  3. 对称 proposal 下，计算 R = Ψ(C ′ )/Ψ(C)，以 min{1, |R|2 } 的概率接受；
+
+  4. 使用局域和非局域移动提高遍历性；热化后收集配置，检查自动相关时间及多个起始链的一
+     致性。
+
+若提议概率不对称，接受率还需乘 q(C ′ → C)/q(C → C ′ )。Ψ(C) = 0 的配置不在抽样支撑上；纯
+NN pairing 可能使某些粒子数子晶格扇区完全无振幅，必须检查 ergodicity。
+
+
+        7 第六步：原始 hard-core Hamiltonian 的 local energy
+
+    对每一个抽样配置，
+                                     X                  Ψ(C ′ )
+                      Eloc (C) =           hC|H|C ′ i           ,   E = hEloc ip(C) .      (19)
+                                                        Ψ(C)
+                                      C′
+
+这里用的是式(1) 的原始算符；hard-core hopping 的允许矩阵元为 1，若目标位点已占据则为 0。
+具体为
+                              X
+                EV (C) = VB          ni nj ,                                               (20)
+                              ⟨ij⟩
+                                X
+                 EJ (C) = −JB          [nj (1 − ni )Rj→i (C) + ni (1 − nj )Ri→j (C)] ,     (21)
+                                ⟨ij⟩
+
+其中 Ru→v (C) = Ψ(Cu→v )/Ψ(C)。
+
+                                                        5
+Hard-core boson: projected mean-field VMC                                                研究笔记
+
+
+7.1 Correlated hopping 的简化计数
+
+    对每条对角次近邻键 hhijiidiag （端点 x, y），方格的另外两个角点记为 c1 (xy), c2 (xy)。在通常
+不退化的正方晶格 PBC 上，原始 K 项可精确改写为
+                    X                                   
+            HK = −K   nc1 (xy) + nc2 (xy) b†x by + b†y bx .                                (22)
+                                 ⟨⟨ij⟩⟩diag
+
+因而                               X                   
+                 EK (C) = −K                nc1 + nc2 ny (1 − nx )Ry→x (C)
+                               ⟨⟨ij⟩⟩diag                                                  (23)
+                                                                                    
+                                                              + nx (1 − ny )Rx→y (C) .
+式(22) 等价于对原式四种 (δ, δ ′ ) 和 Hermitian conjugate 全部求和，不要再重复乘二。最终 Eloc =
+EV + EJ + EK 。
+
+
+          8 第七步：导数与 Stochastic Reconfiguration (SR)
+
+    对实参数 αp ，定义配置的对数导数
+                                                    ∂αp Ψ(C)
+                                        Op (C) =             .                             (24)
+                                                     Ψ(C)
+由 Hafnian 展开，对任意 a < b，
+                                    ∂ Haf(FC )           b
+                                               = Haf(FCbab ),                              (25)
+                                     ∂(FC )ab
+其中删去 a, b 两行和两列，并把矩阵的对称上、下三角视为同一个配对参数。链式法则于是给出
+                                              X ∂fr r                 b
+                                                        a b
+                                                              Haf(FCbab )
+                                                    ∂αp
+                                              a<b
+                               Op (C) =                                     .              (26)
+                                                    Haf(FC )
+
+∂αp fij 可由式(10) 的 Fourier transform 和链式法则获得，例如
+                                       ∂ p Bk      Bk (∂p Ak + ∂p Ek )
+                           ∂ p fk = −          +                       ,
+                                    Ak + E k            (Ak + Ek )2
+                                                                                           (27)
+                                   Ak ∂ p Ak − B k ∂ p B k
+                          ∂ p Ek =                         .
+                                            Ek
+遇到很小的 Ek 时，这些公式会病态；应保持有限 gap、调整变量形式或单独处理凝聚模。
+    能量的变分梯度为
+                            ∂E                                   
+                                = 2 Re hOp∗ Eloc i − hOp∗ ihEloc i .                       (28)
+                            ∂αp
+定义 SR metric 和 energy force
+                                                                 
+                                  Spq = Re hOp∗ Oq i − hOp∗ ihOq i ,
+                                                                     
+                                   Fp = Re hOp∗ Eloc i − hOp∗ ihEloc i ,                   (29)
+                         (S + ϵI) δα = −τ F ,             α ← α + δα.
+
+ϵ > 0 为正则化，τ 为 SR 步长。参数数目为 3 时 S 仅是 3 × 3 矩阵，优化方向比直接拟合所有 fij
+简单；但每一步计算 Haf(FC ) 的开销并没有因为参数少而自动下降。
+
+                                                    6
+Hard-core boson: projected mean-field VMC                                                         研究笔记
+
+
+                      9     第八步：Hafnian 比值与数值成本
+
+    若一次移动只将 rm 换为 r′ ，将新配置的 Hafnian 按含 r′ 的配对展开，有
+                                                X                   bjb
+                                    Ψ(C ′ ) =          fr′ rj Haf(FCm  ).                           (30)
+                                                j̸=m
+
+
+因此可以在一个采样配置上缓存 Haf(FC ) 和所有相关 minor，复用到 local-energy 中的多个单
+粒子跳跃。然而 minor 的计算与更新仍一般需要指数时间，不能像 determinant 那样简单地用
+Sherman–Morrison 公式实现多项式复杂度更新。
+    重要的结构性检查：如果 fij 仅在正方格 NN 异子晶格键上非零，则所有非零配置必须满足
+NA = NB 。最近邻 hopping 改变 NA − NB ，从而导致该限制性波函数的 hHJ i = 0。至少应允许
+对角/更长程的 pairing function；从 Bogoliubov fk 生成的长程尾部有助于缓解此问题。
+
+
+                10 第九步：凝聚零模、秩一极限与物理测量
+
+零模。 旧的仅配对平均场计算在给定参数下找到单玻色子凝聚分支，因而不能不加处理地把 EQ =
+0 的 grand-canonical vacuum 用作归一化 Gaussian reference。可先选择稳定且有隙的 Ak > |Bk |，
+计算 fij 后做定粒子数投影，再检查逼近边界的极限；或显式加入 coherent amplitude，并相应修
+改 Hafnian 振幅公式。不要将凝聚比例直接等同于 ∆。
+
+
+纯 pairing 指数不保证 pair superfluid。 若 fij = φi φj （忽略 hard-core 后无效的对角元素），
+则
+                                                                 Y
+                                                                 2M
+                                   Haf(FC ) = (2M − 1)!!              φr a ,                        (31)
+                                                                a=1
+
+恰好就是数目投影且 hard-core 投影的单粒子 BEC 波函数。因此必须测量长程关联来区分物理相。
+
+
+观测量。 在定粒子数 sector，hbi i = hbi bj i = 0 恒成立，应测量
+
+                  G1 (r) = hb†i bi+r i,               †
+                                          G2 (r) = hPi,δ Pi+r,δ′ i,            Pi,δ = bi bi+δ ,     (32)
+
+以及单粒子密度矩阵和配对密度矩阵的最大本征值的系统尺寸标度、密度关联与结构因子。若 G1
+存在 ODLRO，G2 同时存在 ODLRO 并不能单独证明纯 pair condensate。
+
+
+                       11 第十步：可执行的数值工作流程
+
+ 1. 建立参考态：固定 Lx , Ly , Nb , JB , VB , K，初始化 (χ1 , ∆, λeff )。优先从先前的平均场自洽解附
+    近开始，同时使用多个不同初值避免局部极小值。
+
+ 2. 谱检查：计算 Ak , Bk , Ek ；对最初版本仅接受 Ak > |Bk | 的参数，避免 Gaussian 不稳定区域。
+    特别注意接近凝聚零模的极限。
+
+ 3. 配对矩阵：计算 fk = −Bk /(Ak + Ek )，FFT 得 f (r)，构造对称 fij ；设置 fii = 0。
+
+
+                                                       7
+Hard-core boson: projected mean-field VMC                                     研究笔记
+
+
+ 4. 基础测试：在 4 × 4、Nb = 2 和 8 × 8、Nb = 8 等小体系直接枚举配对以验证 Hafnian、波函
+    数比值及 HCC ′ 的硬核矩阵元。
+
+ 5. VMC 抽样：用 occupied→empty updates 采样，记录 Eloc , Op ；抽样支持必须足够连通。
+
+ 6. SR 迭代：按式(29) 更新 3 个参数，检查 E、梯度和更新量，做不同起点及采样规模的稳定
+    性分析。
+                      1 P
+ 7. 可选改进：引入 e− 2            ij vij ni nj   的 Jastrow factor，以适应较大的 VB ；它不改变 hard-core
+    constraint，但会改变配置振幅和 SR 导数。
+
+ 8. 物相判别：计算 G1 , G2 、密度结构因子，对若干 L 做有限尺寸标度，并与投影 BEC 态（可
+    加 Jastrow）比较能量。
+
+
+算法伪代码
+
+alpha = [chi1, Delta, lambda_eff]
+repeat until converged:
+    A_k, B_k = build_BdG(alpha)
+    assert all(A_k > abs(B_k))
+    f_k = -B_k / (A_k + sqrt(A_k^2-B_k^2))
+    f_r = inverse_FFT(f_k)
+    sample C with probability proportional to |Haf(f[C,C])|^2
+    for each sampled C:
+        E_loc(C) = exact_original_H_local_energy(C)
+        O_p(C) = derivative_log_Haf(C, alpha)
+    compute mean E, SR covariance S, force F
+    delta_alpha = -tau * solve(S + epsilon*I, F)
+    alpha = alpha + delta_alpha
+measure G1, G2, density structure factor with final parameters
+
+
+                             12 最关键的结论与实施边界
+
+  1. 原始 Hamiltonian 只在测量阶段以 hard-core 算符形式计算；Gaussian Wick 的正负号只是
+     参考态参数化约定，不会进入 hard-core VMC 矩阵元。
+
+  2. 固定 ν 时 χ2 与 λ 在这里的均匀参考 Hamiltonian 中冗余，推荐直接优化 (χ1 , ∆, λeff )；若
+     另行强制未投影密度方程，则可减少为两参数，但会缩小变分空间。
+
+  3. 仅有三个参数会明显降低 SR 维数和优化噪声，但并不能从根本上解决 Hafnian 的指数复杂
+     度。
+
+  4. 有零模的单粒子凝聚、偶数粒子数、数目投影下的 U (1) 对称性、以及可能的竞争密度序，是
+     实施时必须独立检查的物理问题。
+
+
+
+                                                  8
+

@@ -1,0 +1,1 @@
+Start with bash run_optimize.sh; the launcher calls sbatch automatically.

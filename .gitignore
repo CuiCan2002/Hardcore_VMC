@@ -1,0 +1,8 @@
+*.exe
+*.obj
+hardcore_vmc
+vmc_tests
+results*/
+validation*/
+/data/
+/analysis/

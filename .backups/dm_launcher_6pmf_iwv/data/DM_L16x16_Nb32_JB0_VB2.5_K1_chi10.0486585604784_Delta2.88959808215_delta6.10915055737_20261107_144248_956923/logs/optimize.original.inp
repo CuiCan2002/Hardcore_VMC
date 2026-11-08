@@ -1,0 +1,13 @@
+Lx = 16
+Ly = 16
+Nb = 32
+JB = 0
+VB = 2.5
+K = 1
+chi1 = 0.0486585604783588
+Delta = 2.889598082150418
+ delta = 6.109150557373617
+samples = 100
+block_size = 20
+warmup_sweeps = 100
+correlations = 0

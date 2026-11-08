@@ -1,0 +1,7 @@
+rank = 0
+mpi_ranks = 2
+seed = 12349
+samples = 60
+total_samples = 120
+pair_measure_stride = 1
+pair_samples = 0
