@@ -40,6 +40,7 @@ void reduce_sum(Real* values, int count) {
 void reduce_correlations(CorrelationAccumulator& corr) {
     reduce_sum(corr.one.data(),int(corr.one.size()));
     reduce_sum(corr.density.data(),int(corr.density.size()));
+    reduce_sum(corr.density_matrix.data(),int(corr.density_matrix.size()));
     reduce_sum(&corr.weight,1);
 }
 
@@ -286,11 +287,8 @@ public:
                 corr.one[i*lat.n+j] += w;
                 corr.one[j*lat.n+i] += w;
             }
-            for (int j : sites) {
-                const int r = lat.site(j%lat.lx-i%lat.lx,j/lat.lx-i/lat.lx);
-                corr.density[r] += Real(1)/lat.n;
-            }
         }
+        corr.add_density(lat,sites);
         for (const auto& bond:lat.bonds)
             pair_trace+=index[bond[0]]>=0 && index[bond[1]]>=0;
     }

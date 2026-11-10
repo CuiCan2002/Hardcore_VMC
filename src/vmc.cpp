@@ -316,7 +316,16 @@ Diagnostics measure_diagnostics(const Lattice& l,const Kernel& k,const std::vect
     d.one[2]=d.one[0]-d.one[1];d.pair[2]=d.pair[0]-d.pair[1];return d;
 }
 CorrelationAccumulator::CorrelationAccumulator(const Lattice& l):
-    one(std::size_t(l.n)*l.n),pair(l.bonds.size()*l.bonds.size()),density(l.n) {}
+    one(std::size_t(l.n)*l.n),pair(l.bonds.size()*l.bonds.size()),density(l.n),
+    density_matrix(std::size_t(l.n)*l.n) {}
+void CorrelationAccumulator::add_density(const Lattice& l,const std::vector<int>& occupied,Real w) {
+    const Real translation_weight=w/l.n;
+    for(int i:occupied)for(int j:occupied) {
+        density_matrix[std::size_t(i)*l.n+j]+=w;
+        int r=l.site(j%l.lx-i%l.lx,j/l.lx-i/l.lx);
+        density[r]+=translation_weight;
+    }
+}
 void CorrelationAccumulator::add(const Lattice& l,const Kernel& k,const std::vector<int>& c,Hafnian& h,Real w,bool measure_pair) {
     auto n=occupancy(l,c);Real psi=h.amplitude();
     require(usable(psi),"Invalid amplitude in correlation measurement");
@@ -350,9 +359,7 @@ void CorrelationAccumulator::add(const Lattice& l,const Kernel& k,const std::vec
             }
         }
     }
-    for(int i:c)for(int j:c) {
-        int r=l.site(j%l.lx-i%l.lx,j/l.lx-i/l.lx);density[r]+=w/l.n;
-    }
+    add_density(l,c,w);
 }
 void CorrelationAccumulator::write(const Lattice& l,const std::string& path) const {
     require(weight>0,"Empty correlation measurement");
@@ -362,6 +369,10 @@ void CorrelationAccumulator::write(const Lattice& l,const std::string& path) con
     g<<"# i j <b_i^dagger b_j>; site=x+Lx*y, zero-based; real Hermitian estimator\n";
     for(int i=0;i<l.n;++i)for(int j=0;j<l.n;++j)
         g<<i<<' '<<j<<' '<<one[i*l.n+j]/weight<<'\n';
+    auto nn=output((parent/"density_density_correlation.dat").string());
+    nn<<"# i j <n_i n_j>; site=x+Lx*y, zero-based; unconnected\n";
+    for(int i=0;i<l.n;++i)for(int j=0;j<l.n;++j)
+        nn<<i<<' '<<j<<' '<<density_matrix[std::size_t(i)*l.n+j]/weight<<'\n';
     auto p=output((parent/"nn_pair_correlation.dat").string());
     p<<"# i j k l <b_i^dagger b_j^dagger b_k b_l>; zero-based; each undirected NN bond listed once (+x,+y)\n";
     std::size_t nb=l.bonds.size();
@@ -582,7 +593,7 @@ Statistics sample(const Config& c,const Lattice& l,const Kernel& k,std::uint64_t
         }
     }
     if(corr) {
-        for(auto* array:{&corr->one,&corr->pair,&corr->density}) {
+        for(auto* array:{&corr->one,&corr->pair,&corr->density,&corr->density_matrix}) {
             require(array->size()<=std::size_t(std::numeric_limits<int>::max()),"Correlation MPI count overflow");
             if(rank==0)MPI_Reduce(MPI_IN_PLACE,array->data(),int(array->size()),MPI_LONG_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
             else MPI_Reduce(array->data(),nullptr,int(array->size()),MPI_LONG_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);

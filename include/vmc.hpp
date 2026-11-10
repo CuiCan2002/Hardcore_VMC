@@ -87,9 +87,10 @@ struct Diagnostics {
 Diagnostics measure_diagnostics(const Lattice&,const Kernel&,const std::vector<int>&,Hafnian&);
 // Real-state Hermitian estimators. Pair indices run over the undirected NN bonds.
 struct CorrelationAccumulator {
-    std::vector<Real> one, pair, density;
+    std::vector<Real> one, pair, density, density_matrix;
     Real weight=0, pair_weight=0;
     explicit CorrelationAccumulator(const Lattice&);
+    void add_density(const Lattice&,const std::vector<int>& occupied,Real w=1);
     void add(const Lattice&,const Kernel&,const std::vector<int>&,Hafnian&,Real sample_weight=1,bool measure_pair=true);
     void write(const Lattice&,const std::string& legacy_csv) const;
 };
